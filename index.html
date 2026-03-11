@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portrait Mystère · Les Cœurs Solitaires</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --violet: #9B59B6; --violet-light: #b57ed0; --fuchsia: #E91E8C; --turquoise: #00BCD4; --noir: #1A1A1A; --creme: #F5F0EB; --gris: #888; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Jost', sans-serif; background: var(--creme); color: var(--noir); min-height: 100vh; }
+
+  #page-garde { position: fixed; inset: 0; z-index: 999; background: linear-gradient(160deg, #2d0a3e 0%, #6b1a7a 50%, #c0156e 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px 24px; transition: opacity 0.8s ease, transform 0.8s ease; }
+  #page-garde.hidden { opacity: 0; transform: scale(1.05); pointer-events: none; }
+  .garde-coeur { font-size: 7rem; line-height: 1; animation: heartbeat 1.8s ease-in-out infinite; filter: drop-shadow(0 0 30px rgba(233,30,140,0.8)); margin-bottom: 28px; }
+  @keyframes heartbeat { 0%, 100% { transform: scale(1); } 14% { transform: scale(1.15); } 28% { transform: scale(1); } 42% { transform: scale(1.1); } 56% { transform: scale(1); } }
+  .garde-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 300; color: rgba(255,255,255,0.7); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+  .garde-titre { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; color: white; line-height: 1.2; margin-bottom: 10px; }
+  .garde-titre .italic { font-style: italic; color: #f9a8d4; }
+  .garde-subtitle { font-size: 0.85rem; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 36px; max-width: 280px; }
+  .garde-btn { background: white; color: #6b1a7a; border: none; border-radius: 50px; padding: 16px 36px; font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 500; cursor: pointer; letter-spacing: 0.05em; box-shadow: 0 8px 32px rgba(0,0,0,0.3); transition: all 0.25s; animation: pulse-btn 2.5s ease-in-out infinite; }
+  @keyframes pulse-btn { 0%, 100% { box-shadow: 0 8px 32px rgba(0,0,0,0.3); } 50% { box-shadow: 0 8px 48px rgba(233,30,140,0.5); } }
+  .garde-dots { display: flex; gap: 6px; margin-top: 32px; }
+  .garde-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+  .garde-dot.active { background: white; }
+
+  #contenu { display: none; }
+  #contenu.visible { display: block; }
+
+  .header { background: white; text-align: center; padding: 18px 20px 14px; border-bottom: 1px solid #e8e0f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(155,89,182,0.08); }
+  .header-brand { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--noir); }
+  .header-brand .heart { color: var(--fuchsia); }
+  .header-brand .italic { font-style: italic; color: var(--violet); }
+  .header-dept { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--gris); margin-top: 4px; text-transform: uppercase; }
+  .tabs { display: flex; background: white; border-bottom: 2px solid #ede8f5; }
+  .tab { flex: 1; padding: 12px 8px; text-align: center; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); cursor: pointer; border: none; background: none; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.25s; }
+  .tab.active { color: var(--violet); border-bottom-color: var(--violet); }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeUp 0.35s ease both; }
+  .card { background: white; margin: 16px; border-radius: 16px; padding: 24px 20px; box-shadow: 0 4px 24px rgba(155,89,182,0.08); }
+  .profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--turquoise), #0097b2); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; flex-shrink: 0; }
+  .profile-name { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; line-height: 1; }
+  .profile-sub { font-size: 0.78rem; color: var(--gris); margin-top: 4px; font-weight: 300; }
+  .profile-badge { display: inline-flex; align-items: center; background: #f0fafe; border: 1px solid #b0e8f4; border-radius: 20px; padding: 5px 12px; font-size: 0.72rem; color: #0097b2; font-weight: 500; margin-top: 8px; }
+  .section-label { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gris); margin: 16px 0 8px; }
+  .en3mots { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--violet); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { background: var(--creme); border: 1px solid #e0d8ec; border-radius: 20px; padding: 4px 12px; font-size: 0.74rem; }
+  .tag.amour { background: #fff0f8; border-color: #f0c0dc; color: var(--fuchsia); }
+  .tag.passion { background: #f0fafe; border-color: #b0e8f4; color: #0097b2; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+  .info-box { background: var(--creme); border-radius: 10px; padding: 10px 12px; }
+  .info-box-label { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gris); margin-bottom: 4px; }
+  .info-box-value { font-size: 0.8rem; line-height: 1.4; }
+  .citation-block { background: #fdf8ff; border-left: 3px solid var(--turquoise); border-radius: 0 12px 12px 0; padding: 16px 18px; margin: 16px 0 4px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: #444; line-height: 1.7; }
+  .photos-header { text-align: center; padding: 24px 16px 8px; font-family: 'Cormorant Garamond', serif; }
+  .photos-title { font-size: 1.6rem; font-weight: 600; }
+  .photos-title .italic { font-style: italic; color: var(--fuchsia); }
+  .photos-sub { font-size: 0.75rem; color: var(--gris); margin-top: 4px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .photo-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px; }
+  .photo-item { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 3/4; background: #e8e0f0; }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; transition: transform 0.4s; }
+  .photo-item:hover img { transform: scale(1.04); }
+  .photo-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(26,26,26,0.6)); color: white; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 20px 8px 8px; }
+  .rencontre-card { background: white; margin: 16px; border-radius: 16px; padding: 28px 20px; box-shadow: 0 4px 24px rgba(155,89,182,0.08); text-align: center; }
+  .rencontre-icon { font-size: 2rem; margin-bottom: 12px; }
+  .rencontre-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 8px; }
+  .rencontre-subtitle { font-size: 0.82rem; color: var(--gris); margin-bottom: 20px; line-height: 1.6; }
+  .steps { text-align: left; background: var(--creme); border-radius: 12px; padding: 16px 18px; margin: 16px 0; }
+  .step { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; font-size: 0.82rem; border-bottom: 1px solid #e8e0f0; line-height: 1.5; }
+  .step:last-child { border-bottom: none; }
+  .step-num { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--fuchsia)); color: white; font-size: 0.75rem; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-text strong { display: block; font-weight: 500; color: var(--noir); }
+  .step-text span { font-size: 0.76rem; color: var(--gris); }
+  .confidentiel-banner { display: flex; justify-content: center; gap: 16px; margin: 12px 0; font-size: 0.74rem; color: var(--violet); font-weight: 500; }
+  .confidentiel-banner span::before { content: "✓ "; }
+  .btn-main { display: block; width: 100%; background: linear-gradient(135deg, var(--fuchsia), #c0156e); color: white; border: none; border-radius: 12px; padding: 16px 20px; font-family: 'Jost', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; text-decoration: none; text-align: center; margin: 12px 0 8px; transition: all 0.25s; box-shadow: 0 4px 16px rgba(233,30,140,0.3); }
+  .btn-main:hover { transform: translateY(-2px); }
+  .btn-paypal { display: block; width: 100%; background: #0070ba; color: white; border: none; border-radius: 12px; padding: 13px 20px; font-family: 'Jost', sans-serif; font-size: 0.85rem; cursor: pointer; text-decoration: none; text-align: center; margin: 8px 0; }
+  .btn-secondary { display: block; width: 100%; background: white; color: var(--violet); border: 1.5px solid var(--violet); border-radius: 12px; padding: 13px 20px; font-family: 'Jost', sans-serif; font-size: 0.85rem; cursor: pointer; text-decoration: none; text-align: center; margin-top: 8px; }
+  .ou-separator { text-align: center; font-size: 0.72rem; color: var(--gris); margin: 4px 0; letter-spacing: 0.1em; }
+  .footer-nav { display: flex; padding: 16px; gap: 10px; }
+  .btn-nav { flex: 1; padding: 12px; border-radius: 10px; font-size: 0.78rem; cursor: pointer; text-decoration: none; text-align: center; border: 1.5px solid var(--violet); color: var(--violet); background: white; font-family: 'Jost', sans-serif; }
+  .btn-nav.primary { background: var(--violet); color: white; }
+  .site-footer { text-align: center; padding: 20px 16px 28px; font-size: 0.72rem; color: var(--gris); line-height: 1.8; }
+  .site-footer a { color: var(--violet); text-decoration: none; }
+  .site-footer strong { color: var(--violet); font-weight: 500; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div id="page-garde">
+  <div class="garde-coeur">♥</div>
+  <div class="garde-brand">Les Cœurs Solitaires · Morbihan</div>
+  <div class="garde-titre">Un <span class="italic">Portrait<br>Mystère</span> vous attend</div>
+  <div class="garde-subtitle">Lili Karantez a sélectionné ce profil avec soin.<br>Êtes-vous prêt·e à découvrir ?</div>
+  <button class="garde-btn" onclick="decouvrir()">✨ Découvrir ce profil</button>
+  <div class="garde-dots">
+    <div class="garde-dot active"></div>
+    <div class="garde-dot"></div>
+    <div class="garde-dot"></div>
+  </div>
+</div>
+
+<div id="contenu">
+  <div class="header">
+    <div class="header-brand"><span class="heart">♥</span> Les Cœurs <span class="italic">Solitaires</span></div>
+    <div class="header-dept">MORBIHAN · 56</div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('profil',this)">① Profil</button>
+    <button class="tab" onclick="showTab('photos',this)">② Photos</button>
+    <button class="tab" onclick="showTab('rencontre',this)">③ Rencontre</button>
+  </div>
+
+  <!-- PROFIL -->
+  <div id="panel-profil" class="panel active">
+    <div class="card">
+      <div class="profile-header">
+        <div class="avatar">♂</div>
+        <div>
+          <div class="profile-name">David G.</div>
+          <div class="profile-sub">Morbihan · 53 ans · Sportif · Curieux</div>
+          <div class="profile-badge">📍 Pays d'Auray · Morbihan</div>
+        </div>
+      </div>
+      <div class="section-label">En 3 mots</div>
+      <div class="en3mots">Attentionné · Ouvert · Bienveillant</div>
+      <div class="section-label">L'amour pour lui c'est…</div>
+      <div class="tags">
+        <span class="tag amour">Fidélité</span>
+        <span class="tag amour">Complicité</span>
+        <span class="tag amour">Partage</span>
+      </div>
+      <div class="grid2">
+        <div class="info-box">
+          <div class="info-box-label">Physique</div>
+          <div class="info-box-value">1m70 · Mince<br>Yeux verts · Cheveux bruns</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">Enfants</div>
+          <div class="info-box-value">Enfant(s) à charge</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">Situation</div>
+          <div class="info-box-value">Divorcé · Non-fumeur</div>
+        </div>
+        <div class="info-box">
+          <div class="info-box-label">Recherche</div>
+          <div class="info-box-value">Femme · 43–55 ans<br>Morbihan uniquement</div>
+        </div>
+      </div>
+      <div class="section-label">Passions & loisirs</div>
+      <div class="tags">
+        <span class="tag passion">🥾 Randonnée</span>
+        <span class="tag passion">🎵 Musique</span>
+        <span class="tag passion">🌿 Nature & jardinage</span>
+        <span class="tag passion">🏃 Running & sport</span>
+        <span class="tag passion">🎬 Cinéma</span>
+        <span class="tag passion">🧘 Bien-être</span>
+      </div>
+      <div class="citation-block">
+        Quelqu'un de vrai, qui aime prendre son temps le matin et partir courir dans la nature le weekend. Il prend soin de l'autre naturellement, sans effort. Sensible et attentionné, il cherche quelqu'un avec qui se sentir bien — simplement, en harmonie. 🌿
+      </div>
+    </div>
+    <div class="footer-nav">
+      <a href="#" onclick="showTabByName('photos');return false;" class="btn-nav primary">📷 Voir ses photos →</a>
+    </div>
+    <div class="site-footer">🔒 Données confidentielles · Cœurs Solitaires<br><strong>Lili Karantez</strong> · 💌 <a href="mailto:lilikarantez@gmail.com">lilikarantez@gmail.com</a><br>📍 Centre des Affaires Lorient La Base · 1 rue Étienne d'Orves, 56100 Lorient<br>SIRET : 40149331700069</div>
+  </div>
+
+  <!-- PHOTOS -->
+  <div id="panel-photos" class="panel">
+    <div class="photos-header">
+      <div class="photos-title">Les <span class="italic">Photos</span> de David G.</div>
+      <div class="photos-sub">Pays d'Auray · Morbihan · 53 ans</div>
+    </div>
+    <div class="photo-grid-2">
+      <div class="photo-item">
+        <img src="https://lilikarantez.github.io/photo-DavidG/david%201.jpg" alt="David G." loading="lazy">
+        <div class="photo-caption">Portrait · Pays d'Auray</div>
+      </div>
+      <div class="photo-item">
+        <img src="https://lilikarantez.github.io/photo-DavidG/david%202.jpg" alt="David G." loading="lazy">
+        <div class="photo-caption">Nature · Morbihan</div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:12px 16px;font-size:0.8rem;color:var(--gris);font-style:italic;">Ce profil vous touche ? Faites le premier pas.</div>
+    <div class="footer-nav">
+      <a href="#" onclick="showTabByName('profil');return false;" class="btn-nav">← Profil</a>
+      <a href="#" onclick="showTabByName('rencontre');return false;" class="btn-nav primary">Me mettre en relation →</a>
+    </div>
+    <div class="site-footer">🔒 Données confidentielles · Cœurs Solitaires<br><strong>Lili Karantez</strong> · 💌 <a href="mailto:lilikarantez@gmail.com">lilikarantez@gmail.com</a><br>📍 Centre des Affaires Lorient La Base · 1 rue Étienne d'Orves, 56100 Lorient<br>SIRET : 40149331700069</div>
+  </div>
+
+  <!-- RENCONTRE -->
+  <div id="panel-rencontre" class="panel">
+    <div class="rencontre-card">
+      <div class="rencontre-icon">💌</div>
+      <div class="rencontre-title">Ce profil vous touche ?</div>
+      <div class="rencontre-subtitle">Voici comment se déroule la mise en relation :</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">①</div><div class="step-text"><strong>Vous réservez votre mise en relation en ligne · 13 €</strong><span>Paiement sécurisé via Yurplan ou PayPal</span></div></div>
+        <div class="step"><div class="step-num">②</div><div class="step-text"><strong>Lili reçoit votre paiement et vous contacte personnellement</strong><span>Sous 48h, par email ou téléphone</span></div></div>
+        <div class="step"><div class="step-num">③</div><div class="step-text"><strong>Vous complétez un questionnaire</strong><span>Pour affiner la mise en relation</span></div></div>
+        <div class="step"><div class="step-num">④</div><div class="step-text"><strong>Si les deux parties sont partantes</strong><span>Lili organise l'échange des coordonnées</span></div></div>
+        <div class="step"><div class="step-num">⑤</div><div class="step-text"><strong>La suite vous appartient</strong><span>En toute liberté et bienveillance 🌿</span></div></div>
+      </div>
+      <div class="confidentiel-banner">
+        <span>Confidentiel</span><span>Discret</span><span>Humain</span>
+      </div>
+      <a href="https://yp.events/b31bb691-3c34-4b20-88cc-0079f3aac80c/Mise-en-Relation-avec-DAVID-G/ticketing?from=1" target="_blank" class="btn-main">💝 Oui, je suis intéressé·e — Me mettre en relation · 13 €</a>
+      <div class="ou-separator">— ou payer par —</div>
+      <a href="https://paypal.me/lilikarantez" target="_blank" class="btn-paypal">🅿 Payer via PayPal · 13 €</a>
+      <a href="mailto:lilikarantez@gmail.com" class="btn-secondary">✉ Une question ? Écrire à Lili</a>
+    </div>
+    <div class="footer-nav">
+      <a href="#" onclick="showTabByName('photos');return false;" class="btn-nav">← Photos</a>
+    </div>
+    <div class="site-footer">🔒 Données confidentielles · Cœurs Solitaires<br><strong>Lili Karantez</strong> · 💌 <a href="mailto:lilikarantez@gmail.com">lilikarantez@gmail.com</a><br>📍 Centre des Affaires Lorient La Base · 1 rue Étienne d'Orves, 56100 Lorient<br>SIRET : 40149331700069</div>
+  </div>
+</div>
+
+<script>
+function decouvrir() {
+  const garde = document.getElementById('page-garde');
+  const contenu = document.getElementById('contenu');
+  garde.classList.add('hidden');
+  setTimeout(() => { garde.style.display = 'none'; contenu.classList.add('visible'); }, 800);
+}
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showTabByName(name) {
+  const names = ['profil','photos','rencontre'];
+  const tabs = document.querySelectorAll('.tab');
+  const idx = names.indexOf(name);
+  if (idx >= 0) showTab(name, tabs[idx]);
+}
+</script>
+</body>
+</html>
